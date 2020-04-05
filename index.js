@@ -2,15 +2,27 @@ const express = require('express');
 
 const server = express();
 
-// localhost:3000/teste
+// criando uma rota. Para definir nosso routes params, temos que especificar 
+// isso na url
+server.get('/teste/:id', (req, res) =>{
+  // Bucar os query
+  const nome = req.query.nome;
+  // Buscar params
+  const id = req.params.id;
 
-// criando uma rota
-server.get('/teste', () =>{
-  console.log('Teste');
-  // o servidor não vai parar de funcionar porque nós não estamos retornando nada
+  //return res.send('Hello World');
+  // OU
+  return res.json({
+    message: 'Hello ' + nome,
+    id: id,
+  })
+
 })
 
 server.listen(3000);
 
 
+
+
 // Para executar: node index.js
+// http://localhost:3000/teste/300?nome=Ian
