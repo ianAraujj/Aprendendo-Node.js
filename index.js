@@ -6,6 +6,34 @@ const server = express();
 server.use(express.json());
 
 
+// Usar o Design Pattern: Middleware
+server.use((req, res, next) => {
+  return next();
+})
+
+function verificacoes(req, res, next) {
+  if (!req.body.nome){
+    return res.status(400).json({ERROR: "Não foi encontrado o objeto nome"});
+  }
+
+  if(!req.body.idade){
+    return res.status(400).json({ERROR: "Não foi encontrado o objeto name"});
+  }
+
+  return next();
+}
+
+function check_param(req, res, next){
+  const id = req.params.id;
+
+  if ((id >= usuarios.length) || (id < 0) ){
+    return res.status(400).json({ERROR: "Índice fora do intervalo"});
+  }
+
+  return next();
+
+}
+
 // ---------------FAZENDO um CRUD - Create, Read, Update and Delete -------
 const usuarios = [
   {nome: 'Ian Luccas Araujo', idade: 21}, 
@@ -14,7 +42,7 @@ const usuarios = [
 ]
 
 
-server.post('/create/', (req, res) =>{
+server.post('/create/', verificacoes, (req, res) =>{
 
   usuarios.push({
     nome: req.body.nome,
@@ -29,7 +57,7 @@ server.post('/create/', (req, res) =>{
 // READ
 // criando uma rota. Para definir nosso routes params, temos que especificar 
 // isso na url
-server.get('/list/:id', (req, res) =>{
+server.get('/list/:id', check_param, (req, res) =>{
   // Buscar params
   const id = req.params.id;
 
@@ -48,7 +76,7 @@ server.get('/all/', (req, res) =>{
 
 
 //UPDATE
-server.put('/update/:id', (req, res) =>{
+server.put('/update/:id', check_param, verificacoes, (req, res) =>{
 
   const id = req.params.id;
 
@@ -61,7 +89,7 @@ server.put('/update/:id', (req, res) =>{
 
 
 //Delete
-server.delete('/delete/:id', (req, res) =>{
+server.delete('/delete/:id', check_param, (req, res) =>{
   const id = req.params.id;
 
   usuarios.splice(id,1); 
